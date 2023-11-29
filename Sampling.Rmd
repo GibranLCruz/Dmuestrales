@@ -1,0 +1,271 @@
+---
+title: "AFDMD-111 - Estadística"
+subtitle: "Distribuciones muestrales"
+author: "gibran Aaron Loeza De la Cruz"
+date: "27/11/2023"
+output:
+  rmdformats::readthedown:
+    highlight: tango
+    cards: false
+---
+
+
+```{r knitr_init, echo=FALSE, message=FALSE, warning=FALSE}
+
+```
+
+
+
+# Distribuciones muestrales de la media
+
+En esta práctica  abordaremos el tema de la distribución muestral de la media para diversas distribuciones de probabilidad y veremos como éstas se ajustan a una distribución de probabilidad normal o Gaussiana como la que se muestra en la ecuación,
+
+$$
+f_X(x) = \frac{1}{\sqrt{2\pi \sigma^2}} \mbox{e}^{-\frac{-(x-\mu)^2}{2\sigma^2}}
+$$
+
+Antes de iniciar, es necesario que nos familiaricemos con los siguientes comandos:
+
+```{r}
+#hist()
+#qqnorm()
+#qqline()
+```
+
+para ello podemos hacer `help(comando)` y obtener ayuda sobre cada uno de ellos. Ahora responda lo siguiente.
+
+1. ¿Cuál es la función del comando `qqnorm`?.
+`Se utiliza en R para generar un gráfico de cuantiles normales. Este gráfico es una herramienta visual para evaluar si un conjunto de datos sigue una distribución normal.`
+
+```{r}
+# Generar datos aleatorios
+datos <- rnorm(100)
+
+# Crear un gráfico de cuantiles normales
+qqnorm(datos)
+```
+
+2. ¿Cuál es la función del comando `qqline`? ¿y de `hist`?.
+qqline: `Se utiliza en R para agregar una línea de referencia a un gráfico de cuantiles normales generado con el comando`
+```{r}
+# Generar datos aleatorios
+datos <- rnorm(100)
+
+# Crear un gráfico de cuantiles normales
+qqnorm(datos)
+qqline(datos)
+```
+
+hist: `se utiliza en R para crear un histograma, que es un gráfico que representa la distribución de frecuencias de un conjunto de datos.`
+```{r}
+# Generar datos aleatorios
+datos <- rnorm(100)
+
+# Crear un histograma
+hist(datos)
+```
+
+
+## Aplicación de `qqnorm` y `qqline`
+
+Veamos ahora la aplicación de `qqnorm` y `qqline` en un ejemplo práctico. Supóngamos que queremos verificar si los datos se ajustan a una distribución normal, entonces para hacerlo, aplicamos,
+
+```{r}
+datos <- rnorm(100, mean = 10)
+qqnorm(datos)
+qqline(datos)
+```
+
+Actividad.
+
+1. Ahora cambie los nombres de los ejes $x$, $y$ y del título del gráfico anterior.
+
+```{r}
+datos <- rnorm(100, mean = 10)
+qqnorm(datos, 
+       xlab = "Cuántiles teóricos",   # Cambia el nombre del eje x
+       ylab = "Cuántiles observados",  # Cambia el nombre del eje y
+       main = "Gráfico Q-Q de la Distribución Normal")  # Cambia el título
+qqline(datos)
+
+```
+
+2. ¿Qué sucede si la longitud de los datos es pequeña, digamos 10, 20 (modifique `rnorm`)? 
+ `el gráfico de cuantiles normales podría mostrar una distribución diferente a la normal.`
+ 
+```{r}
+datos_10 <- rnorm(10, mean = 10)
+qqnorm(datos_10, 
+       xlab = "Cuántiles teóricos",
+       ylab = "Cuántiles observados",
+       main = "Gráfico Q-Q de la Distribución Normal (n = 10)")
+qqline(datos_10)
+```
+
+3. ¿Qué sucede si los datos tienen varianza grande? ¿En qué parte del gráfico Q-Q se puede ver la varianza grande?
+
+Se puede observar una dispersión más amplia alrededor de la línea diagonal, Esto indica que los datos tienen una distribución menos normal.La varianza grande se refleja en la dispersión de los puntos alrededor de la línea de referencia en el gráfico Q-Q
+
+
+```{r}
+datos_varianza_grande <- rnorm(100, mean = 10, sd = 5)
+qqnorm(datos_varianza_grande, 
+       xlab = "Cuántiles teóricos",
+       ylab = "Cuántiles observados",
+       main = "Gráfico Q-Q con Varianza Grande")
+qqline(datos_varianza_grande)
+```
+
+4. ¿Y si cambiamos la media?
+
+Se estará desplazando la distribución de los datos a lo largo del eje horizontal en el gráfico Q-Q. Cambiar la media afectará la posición de los puntos en relación con la línea Q-Q esperada
+
+```{r}
+# Datos con media diferente
+datos_media_diferente <- rnorm(100, mean = 15, sd = 5)
+qqnorm(datos_media_diferente, 
+       xlab = "Cuántiles teóricos",
+       ylab = "Cuántiles observados",
+       main = "Gráfico Q-Q con Media Diferente (mean = 15)")
+qqline(datos_media_diferente)
+
+```
+
+
+5. ¿Qué sucede si los datos son exponenciales?
+
+Se observará una desviación de la línea diagonal, lo que indica que los datos no se ajustan a una distribución normal
+ 
+```{r}
+# Datos con distribución exponencial
+datos_exponenciales <- rexp(100, rate = 0.1)  # La tasa (rate) es el inverso de la media
+
+qqnorm(datos_exponenciales, 
+       xlab = "Cuántiles teóricos",
+       ylab = "Cuántiles observados",
+       main = "Gráfico Q-Q de Distribución Exponencial")
+qqline(datos_exponenciales)
+
+```
+
+
+## Aplicación de `hist`
+
+El comando `hist` permite obtener el histograma de una serie de datos. El histograma, de igual forma que el gráfico Q-Q permite ajustar una serie de datos a una distribución para saber qué tanto se parece a la densidad teórica. Veamos cómo se aplica.
+
+
+
+```{r}
+datos <- rnorm(1000) #1000 muestras de una densidad normal
+hist(datos)
+
+```
+
+Podemos ver en el gráfico del histograma que éste es similar al gráfico de la densidad. El siguiente código lo muestra:
+
+
+```{r}
+datos <- rnorm(1000) # muestras normales con media 0 y var 1.
+teorica <- dnorm(seq(-4,4, length=100),mean = 0, sd = 1)
+hist(datos,freq = FALSE)
+lines(seq(-4,4, length=100),teorica, col="red")
+```
+
+Actividades.
+
+1. ¿Qué sucede si el número de muestras es pequeño (muestrelo mediante código y gráficas?
+
+La distribución de las muestras puede no reflejar con precisión la forma de la distribución teórica
+
+```{r}
+datos <- rnorm(10) # muestras normales con media 0 y var 1.
+teorica <- dnorm(seq(-4,4, length=100),mean = 0, sd = 1)
+hist(datos,freq = FALSE)
+lines(seq(-4,4, length=100),teorica, col="green")
+```
+
+2. ¿Y si cambio la varianza? ¿Tiene algún efecto la varianza grande? Mostrar con código.
+
+Sí, cambiar la varianza afectará la dispersión de los datos y, por lo tanto, influirá en la forma de la distribución
+```{r}
+# Generar datos con varianza grande (var = 3)
+datos_var_grande <- rnorm(1000, mean = 0, sd = 3)
+teorica_var_grande <- dnorm(seq(-12, 12, length = 100), mean = 0, sd = 3)
+hist(datos_var_grande, freq = FALSE, main = "Distribución con Varianza Grande")
+lines(seq(-12, 12, length = 100), teorica_var_grande, col = "green")
+
+```
+Aqui el histograma es más ancho y más disperso en comparación con la distribución teórica.
+
+3. ¿Cuáles crees que son las ventajas y desventajas del histograma y el gráfico Q-Q?
+
+Ambos gráficos tienen sus propias fortalezas y limitaciones. son excelentes para obtener una visión general de la distribución de los datos, mientras que los gráficos Q-Q son más específicos.
+
+# Aplicación de la distribución muestral de la media.
+
+El término distribución muestral de la media se refiera a la distribución (ajustada mediante el gráfico Q-Q o el histograma) de la media muestral de un  conjunto de datos. Por ejemplo,
+
+```{r}
+N <- 10 # número de medias (es decir número de muestras)
+M <- 100 # número de la longitud de cada serie de datos
+medias <- numeric(N) # Vector que guardará las medias
+
+for(i in 1:N)
+{
+  datos <- rnorm(M)
+  medias[i] <- mean(datos)
+  
+}
+hist(medias)
+qqnorm(medias)
+qqline(medias)
+```
+
+
+Actividad
+
+1. ¿Qué sucede si hago N grande, por ejemplo 100, 1000, 10000?
+
+Estarás generando más muestras de datos y, por lo tanto, más medias. Aumentar N proporciona una mejor representación de la distribución de las medias
+```{r}
+N <- 1000  
+M <- 100   
+medias <- numeric(N)  
+
+for (i in 1:N) {
+  datos <- rnorm(M)
+  medias[i] <- mean(datos)
+}
+
+
+
+hist(medias, main = "Histograma de Medias", xlab = "Medias")
+qqnorm(medias, main = "Q-Q Plot de Medias")
+qqline(medias)
+
+```
+
+2. ¿Qué sucede si en lugar de tomar una muestra Gaussiana, tomo una muestra exponencial con N muy grande?
+
+```{r}
+N <- 1000  
+M <- 100   
+medias <- numeric(N)
+
+for (i in 1:N) {
+  datos <- rexp(M)
+  medias[i] <- mean(datos)
+}
+
+
+hist(medias, main = "Histograma de Medias (Exponencial)", xlab = "Medias")
+qqnorm(medias, main = "Q-Q Plot de Medias (Exponencial)")
+qqline(medias)
+
+```
+
+La distribución de las medias cambiará. La distribución de la media de una muestra de una distribución exponencial no será necesariamente normal.
+
+
+## Fecha de entrega: Miércoles 29 de Noviembre de 2023 ha las 16:00HRS 
+
